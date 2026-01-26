@@ -1,15 +1,11 @@
 [package]
-name = "RustProject"
+name = "To-do-list"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-serde = {version = "1.0.228", features = ["derive"]}
-serde_json = "1.0"
-toml = "0.8"
-
-tokio = {version = "1", features = ["full"]}
-tokio-postgres = "0.7.16"
-
-[profile.release]
-debug = true
+chrono = "0.4.43"
+rust-analyzer = "0.0.1"
+rustfmt = "0.10.0"
+sqlx = "0.8.6"
+tokio = "1.49.0"

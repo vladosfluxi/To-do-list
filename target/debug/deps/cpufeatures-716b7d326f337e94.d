@@ -1,6 +1,6 @@
-/mnt/data/Programming/RustProject/target/debug/deps/cpufeatures-716b7d326f337e94.d: /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/x86.rs
+/mnt/data/Programming/To-do-list/target/debug/deps/cpufeatures-716b7d326f337e94.d: /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/x86.rs
 
-/mnt/data/Programming/RustProject/target/debug/deps/libcpufeatures-716b7d326f337e94.rmeta: /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/x86.rs
+/mnt/data/Programming/To-do-list/target/debug/deps/libcpufeatures-716b7d326f337e94.rmeta: /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/x86.rs
 
 /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs:
 /home/vlados3/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/x86.rs:
