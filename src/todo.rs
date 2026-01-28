@@ -3,15 +3,17 @@ use std::collections::HashSet;
 use std::io;
 use std::io::*;
 
+use crate::db::{self, DataBase};
+
 #[derive(Debug)]
-struct Task {
-    id: String,
-    task: String,
-    exp_date: NaiveDate,
+pub struct Task {
+    pub id: String,
+    pub task: String,
+    pub exp_date: NaiveDate,
 }
 
 impl Task {
-    fn new(id: String, task: String, year_string: u32, date: u32, month_string: u32) -> Self {
+    pub fn new(id: String, task: String, year_string: u32, date: u32, month_string: u32) -> Self {
         Task {
             id,
             task,
@@ -20,11 +22,32 @@ impl Task {
     }
 }
 
-fn greet() {
+pub fn greet() {
     println!("<------ This is a to-do list ------>");
 }
+fn user_input() -> String {
+    let mut choice = String::new();
+    io::stdin().read_line(&mut choice).expect("");
+    let choice: String = String::from(choice.trim());
+    choice.trim().to_string()
+}
+pub async fn choice(db: &db::DataBase) -> Result<()> {
+    let choice: String = user_input();
 
-fn print_options() {
+    match choice.as_str() {
+        "1" => {
+            let task: Task = add_to_list();
+            db.insert_new_task(&task).await;
+        }
+        "2" => {}
+        "3" => {}
+        "4" => {}
+        _ => {}
+    }
+    Ok(())
+}
+
+pub fn print_options() {
     println!("Choices:");
     println!("1. Add task to list");
     println!("2. Remove from list");
@@ -34,12 +57,12 @@ fn print_options() {
     io::stdout().flush().unwrap();
 }
 
-fn flush_terminal() {
+pub fn flush_terminal() {
     io::stdout().flush().unwrap();
 }
 // <------ FUNCTIONS MODIFYING THE LIST ------>
 
-fn add_to_list() {
+pub fn add_to_list() -> Task {
     //<------ ID PART ----->
     println!("Create id for the task\n>>> ");
     flush_terminal();
@@ -91,14 +114,13 @@ fn add_to_list() {
         let year_int_len = year_string.len();
         year_int = year_string.parse().expect("");
 
-        if (year_int_len != 4) {
+        if year_int_len != 4 {
             println!("The year value must be valid");
             continue;
         }
 
         break;
     }
-
     // <----- DATE ----->
     println!("Enter a valid date\n>>> ");
     loop {
@@ -130,39 +152,51 @@ fn add_to_list() {
         match month_string.trim().to_uppercase().as_str() {
             "JANUARY" => {
                 month_int = 1;
+                break;
             }
             "FERBUARY" => {
                 month_int = 2;
+                break;
             }
             "MARCH" => {
                 month_int = 3;
+                break;
             }
             "APRIL" => {
                 month_int = 4;
+                break;
             }
             "MAY" => {
                 month_int = 5;
+                break;
             }
             "JUNE" => {
                 month_int = 6;
+                break;
             }
             "JULY" => {
                 month_int = 7;
+                break;
             }
             "AUGUST" => {
                 month_int = 8;
+                break;
             }
             "SEPTEMBER" => {
                 month_int = 9;
+                break;
             }
             "OKTOBER" => {
                 month_int = 10;
+                break;
             }
             "NOVEMBER" => {
                 month_int = 11;
+                break;
             }
             "DECEMBER" => {
                 month_int = 12;
+                break;
             }
             _ => {
                 println!("Enter a valid month");
@@ -171,4 +205,5 @@ fn add_to_list() {
         }
     }
     let task = Task::new(id, task, year_int, date_int, month_int);
+    task
 }
