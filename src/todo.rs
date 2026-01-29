@@ -38,7 +38,10 @@ pub async fn impl_choice(db: &db::DataBase) {
             let task: Task = add_to_list();
             db.insert_new_task(&task).await;
         }
-        "2" => {}
+        "2" => {
+            let id = id_to_delete();
+            db.delete_task(&id).await;
+        }
         "3" => {}
         "4" => {}
         _ => {}
@@ -70,13 +73,13 @@ pub fn add_to_list() -> Task {
         io::stdin().read_line(&mut id).expect("");
         id = id.trim().to_string();
 
-        match id.parse::<u16>() {
+        match id.parse::<i32>() {
             Ok(num) => {
                 if num < 0 {
                     println!("The id must be more than 0");
                     continue;
                 }
-                id_int = num as i32;
+                id_int = num;
                 break;
             }
             Err(_) => {
@@ -218,6 +221,29 @@ pub fn add_to_list() -> Task {
             }
         }
     }
-    let task = Task::new(id_int, task, year_int, date_int, month_int);
-    task
+    Task::new(id_int, task, year_int, date_int, month_int)
+}
+
+fn id_to_delete() -> i32 {
+    let mut id_int: i32 = 0;
+    loop {
+        let mut id_string = String::new();
+        io::stdin().read_line(&mut id_string).expect("");
+
+        match id_string.trim().parse::<i32>() {
+            Ok(num) => {
+                if num < 0 {
+                    println!("The id must be more than 0\n>>> ");
+                    continue;
+                }
+                id_int = num;
+                break;
+            }
+            Err(_) => {
+                println!("The id must be a valid numeric value\n>>> ");
+                continue;
+            }
+        }
+    }
+    id_int
 }

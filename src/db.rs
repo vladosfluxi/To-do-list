@@ -24,9 +24,9 @@ impl DataBase {
         Ok(())
     }
 
-    pub async fn delete_task(&self, id: &u32) -> Result<(), sqlx::Error> {
-        sqlx::query("DELETE FROM tasks WHERE id=$1")
-            .bind(*id as i64)
+    pub async fn delete_task(&self, id: &i32) -> Result<(), sqlx::Error> {
+        sqlx::query("DELETE FROM tasks WHERE id=$1;")
+            .bind(*id)
             .execute(&self.pool)
             .await?;
         Ok(())
