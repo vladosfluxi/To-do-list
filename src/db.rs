@@ -25,21 +25,21 @@ impl DataBase {
     }
 
     pub async fn delete_task(&self, id: &u32) -> Result<(), sqlx::Error> {
-        sqlx::query("DELETE FROM rust_todo WHERE id=$1")
+        sqlx::query("DELETE FROM tasks WHERE id=$1")
             .bind(*id as i64)
             .execute(&self.pool)
             .await?;
         Ok(())
     }
     pub async fn get_all_tasks(&self) -> Result<Vec<Task>, sqlx::Error> {
-        let rows = sqlx::query("SELECT * FROM rust_todo")
+        let rows = sqlx::query("SELECT * FROM tasks")
             .fetch_all(&self.pool)
             .await?;
 
         let all_tasks: Vec<Task> = rows
             .iter()
             .map(|row| Task {
-                id: row.get::<i32, _>(0).to_string(),
+                id: row.get::<i32, _>(0),
                 task: row.get::<String, _>(1),
                 exp_date: row.get::<NaiveDate, _>(2),
             })

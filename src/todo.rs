@@ -7,13 +7,13 @@ use crate::db::{self, DataBase};
 
 #[derive(Debug)]
 pub struct Task {
-    pub id: String,
+    pub id: i32,
     pub task: String,
     pub exp_date: NaiveDate,
 }
 
 impl Task {
-    pub fn new(id: String, task: String, year: u32, date: u32, month: u32) -> Self {
+    pub fn new(id: i32, task: String, year: u32, date: u32, month: u32) -> Self {
         Task {
             id,
             task,
@@ -65,15 +65,24 @@ pub fn add_to_list() -> Task {
     print!("Create id for the task\n>>> ");
     flush_terminal();
     let mut id = String::new();
+    let mut id_int: i32 = 0;
     loop {
         io::stdin().read_line(&mut id).expect("");
         id = id.trim().to_string();
 
         match id.parse::<u16>() {
-            Ok(_) => break,
+            Ok(num) => {
+                if num < 0 {
+                    println!("The id must be more than 0");
+                    continue;
+                }
+                id_int = num as i32;
+                break;
+            }
             Err(_) => {
                 println!("Failed to parse string into u16");
                 id.clear();
+                continue;
             }
         }
     }
@@ -109,7 +118,7 @@ pub fn add_to_list() -> Task {
 
         match year_string.parse::<u32>() {
             Ok(num) => {
-                if (year_string.len() != 4) {
+                if year_string.len() != 4 {
                     println!("The year must be exactly 4 digits");
                     continue;
                 }
@@ -151,6 +160,7 @@ pub fn add_to_list() -> Task {
     println!("Enter a month (using month's name)");
 
     loop {
+        month_string.clear();
         io::stdin().read_line(&mut month_string).expect("");
 
         match month_string.trim().to_uppercase().as_str() {
@@ -208,6 +218,6 @@ pub fn add_to_list() -> Task {
             }
         }
     }
-    let task = Task::new(id, task, year_int, date_int, month_int);
+    let task = Task::new(id_int, task, year_int, date_int, month_int);
     task
 }
