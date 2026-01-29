@@ -13,11 +13,11 @@ pub struct Task {
 }
 
 impl Task {
-    pub fn new(id: String, task: String, year_string: u32, date: u32, month_string: u32) -> Self {
+    pub fn new(id: String, task: String, year: u32, date: u32, month: u32) -> Self {
         Task {
             id,
             task,
-            exp_date: NaiveDate::from_ymd_opt(year_string as i32, date, month_string).unwrap(),
+            exp_date: NaiveDate::from_ymd_opt(year as i32, date, month).unwrap(),
         }
     }
 }
@@ -28,10 +28,9 @@ pub fn greet() {
 fn user_input() -> String {
     let mut choice = String::new();
     io::stdin().read_line(&mut choice).expect("");
-    let choice: String = String::from(choice.trim());
     choice.trim().to_string()
 }
-pub async fn choice(db: &db::DataBase) -> Result<()> {
+pub async fn impl_choice(db: &db::DataBase) {
     let choice: String = user_input();
 
     match choice.as_str() {
@@ -44,7 +43,6 @@ pub async fn choice(db: &db::DataBase) -> Result<()> {
         "4" => {}
         _ => {}
     }
-    Ok(())
 }
 
 pub fn print_options() {
@@ -64,17 +62,18 @@ pub fn flush_terminal() {
 
 pub fn add_to_list() -> Task {
     //<------ ID PART ----->
-    println!("Create id for the task\n>>> ");
+    print!("Create id for the task\n>>> ");
     flush_terminal();
     let mut id = String::new();
     loop {
         io::stdin().read_line(&mut id).expect("");
-        id.trim();
+        id = id.trim().to_string();
 
         match id.parse::<u16>() {
             Ok(_) => break,
             Err(_) => {
                 println!("Failed to parse string into u16");
+                id.clear();
             }
         }
     }
@@ -92,55 +91,60 @@ pub fn add_to_list() -> Task {
     println!("Enter the exp-date\n>>> ");
     flush_terminal();
 
-    let mut year_string = String::new();
     let mut year_int: u32 = 0;
-    let mut date = String::new();
     let mut date_int: u32 = 0;
     let mut month_string = String::new();
     let mut month_int: u32 = 0;
 
-    println!("Enter the full year_string\n>>> ");
+    print!("Enter the full year\n>>> ");
     flush_terminal();
 
     // <----- year_string ----->
     loop {
+        let mut year_string = String::new();
         io::stdin().read_line(&mut year_string).expect("");
-        year_string.trim();
+        let _ = year_string.trim();
 
-        if year_string.parse::<u32>().is_err() {
-            println!("Year must contain only numeric values\nEnter the year again\n>>> ");
-            continue;
+        let year_string = year_string.trim();
+
+        match year_string.parse::<u32>() {
+            Ok(num) => {
+                if (year_string.len() != 4) {
+                    println!("The year must be exactly 4 digits");
+                    continue;
+                }
+
+                year_int = num;
+                break;
+            }
+            Err(_) => {
+                println!("The year must contain only numeric values\n>>>");
+                continue;
+            }
         }
-        let year_int_len = year_string.len();
-        year_int = year_string.parse().expect("");
-
-        if year_int_len != 4 {
-            println!("The year value must be valid");
-            continue;
-        }
-
-        break;
     }
     // <----- DATE ----->
     println!("Enter a valid date\n>>> ");
     loop {
+        let mut date = String::new();
         io::stdin().read_line(&mut date).expect("");
 
-        if let Err(_) = date.trim().parse::<u32>() {
-            println!("Failed to parse string to u32.\nEnter a valid date\n>>> ");
-            continue;
+        let date = date.trim();
+
+        match date.parse::<u32>() {
+            Ok(date_match_case) => {
+                if date.len() < 1 || date.len() > 2 {
+                    println!("Date must be varying from 1 to 31\n>>> ");
+                    continue;
+                }
+                date_int = date_match_case;
+                break;
+            }
+            Err(_) => {
+                println!("Date must be a valid number\n>>> ");
+                continue;
+            }
         }
-
-        let date_len = date.to_string().len();
-
-        if date_len < 1 || date_len > 2 {
-            println!("Date must be a valid number.\nEnter a valid date\n>>> ");
-            continue;
-        }
-
-        date_int = date.parse::<u32>().unwrap();
-
-        break;
     }
 
     // <----- MONTH ----->
@@ -154,7 +158,7 @@ pub fn add_to_list() -> Task {
                 month_int = 1;
                 break;
             }
-            "FERBUARY" => {
+            "FEBRUARY" => {
                 month_int = 2;
                 break;
             }
@@ -186,7 +190,7 @@ pub fn add_to_list() -> Task {
                 month_int = 9;
                 break;
             }
-            "OKTOBER" => {
+            "OCTOBER" => {
                 month_int = 10;
                 break;
             }

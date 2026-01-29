@@ -13,7 +13,7 @@ impl DataBase {
         Ok(Self { pool })
     }
 
-    pub async fn insert_new_task(self, task: &Task) -> Result<(), sqlx::Error> {
+    pub async fn insert_new_task(&self, task: &Task) -> Result<(), sqlx::Error> {
         sqlx::query("INSERT INTO tasks (id,task,exp_date) VALUES ($1,$2,$3)")
             .bind(&task.id)
             .bind(&task.task)
@@ -31,19 +31,17 @@ impl DataBase {
             .await?;
         Ok(())
     }
-    pub async fn get_all_tasks(&self) -> Result<Vec<Vec<String>>, sqlx::Error> {
+    pub async fn get_all_tasks(&self) -> Result<Vec<Task>, sqlx::Error> {
         let rows = sqlx::query("SELECT * FROM rust_todo")
             .fetch_all(&self.pool)
             .await?;
 
-        let all_tasks = rows
+        let all_tasks: Vec<Task> = rows
             .iter()
-            .map(|row| {
-                vec![
-                    row.try_get::<i32, _>(0).to_string(),
-                    row.get::<String, _>(1),
-                    row.get::<NaiveDate, _>(2).to_string(),
-                ]
+            .map(|row| Task {
+                id: row.get::<i32, _>(0).to_string(),
+                task: row.get::<String, _>(1),
+                exp_date: row.get::<NaiveDate, _>(2),
             })
             .collect();
 

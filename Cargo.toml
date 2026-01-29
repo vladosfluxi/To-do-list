@@ -8,4 +8,4 @@ chrono = "0.4.43"
 rust-analyzer = "0.0.1"
 rustfmt = "0.10.0"
 tokio = { version = "1.49.0", features = ["full"] }
-sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio-native-tls"] }
+sqlx = { version = "0.8.6", features = ["postgres","chrono", "runtime-tokio-native-tls"] }
