@@ -1,10 +1,10 @@
 use chrono::NaiveDate;
-use std::collections::HashSet;
 use std::io;
 use std::io::*;
+use std::process;
+use std::{collections::HashSet, task};
 
 use crate::db::{self, DataBase};
-
 #[derive(Debug)]
 pub struct Task {
     pub id: i32,
@@ -17,7 +17,7 @@ impl Task {
         Task {
             id,
             task,
-            exp_date: NaiveDate::from_ymd_opt(year as i32, date, month).unwrap(),
+            exp_date: NaiveDate::from_ymd_opt(year as i32, month, date).unwrap(),
         }
     }
 }
@@ -30,21 +30,39 @@ fn user_input() -> String {
     io::stdin().read_line(&mut choice).expect("");
     choice.trim().to_string()
 }
-pub async fn impl_choice(db: &db::DataBase) {
-    let choice: String = user_input();
 
-    match choice.as_str() {
-        "1" => {
-            let task: Task = add_to_list();
-            db.insert_new_task(&task).await;
+pub async fn impl_choice(db: &db::DataBase) {
+    loop {
+        let choice: String = user_input();
+
+        match choice.as_str() {
+            "1" => {
+                let task: Task = add_to_list();
+                match db.insert_new_task(&task).await {
+                    Ok(_) => println!("Task inserted successfully\n>>> "),
+                    Err(e) => println!("Failed to insert new task: {e}\n>>> "),
+                }
+            }
+            "2" => {
+                let id = id_to_delete();
+                match db.delete_task(&id).await {
+                    Ok(_) => println!("Task deleted successfully\n>>> "),
+                    Err(e) => println!("Failed to delete task: {e}\n>>> "),
+                }
+            }
+            "3" => match db.get_all_tasks().await {
+                Ok(tasks) => {
+                    print_tasks(tasks);
+                }
+                Err(e) => {
+                    println!("Failed to fetch tasks: {}\n>>> ", e)
+                }
+            },
+            "4" => process::exit(0),
+            _ => {
+                println!("No match found:{}", &choice)
+            }
         }
-        "2" => {
-            let id = id_to_delete();
-            db.delete_task(&id).await;
-        }
-        "3" => {}
-        "4" => {}
-        _ => {}
     }
 }
 
@@ -54,7 +72,7 @@ pub fn print_options() {
     println!("2. Remove from list");
     println!("3. View all");
     println!("4. Quit");
-    println!(">>>");
+    print!(">>> ");
     io::stdout().flush().unwrap();
 }
 
@@ -62,6 +80,12 @@ pub fn flush_terminal() {
     io::stdout().flush().unwrap();
 }
 // <------ FUNCTIONS MODIFYING THE LIST ------>
+
+pub fn print_tasks(tasks: Vec<Task>) {
+    for t in &tasks {
+        println!("{},{},{}", t.id, t.task, t.exp_date);
+    }
+}
 
 pub fn add_to_list() -> Task {
     //<------ ID PART ----->
@@ -136,7 +160,7 @@ pub fn add_to_list() -> Task {
         }
     }
     // <----- DATE ----->
-    println!("Enter a valid date\n>>> ");
+    print!("Enter a valid date\n>>> ");
     loop {
         let mut date = String::new();
         io::stdin().read_line(&mut date).expect("");
@@ -160,7 +184,7 @@ pub fn add_to_list() -> Task {
     }
 
     // <----- MONTH ----->
-    println!("Enter a month (using month's name)");
+    print!("Enter a month (using month's name)\n>>> ");
 
     loop {
         month_string.clear();

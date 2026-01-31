@@ -3,6 +3,13 @@ name = "To-do-list"
 version = "0.1.0"
 edition = "2024"
 
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
 [dependencies]
 chrono = "0.4.43"
 rust-analyzer = "0.0.1"
